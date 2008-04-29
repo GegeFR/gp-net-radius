@@ -22,11 +22,21 @@ public class VendorSpecificAVP extends BytesAVP
     public VendorSpecificAVP(BytesAVP bytesAVP)
     {
         super(bytesAVP);
-        this.vendorDataCollection = new VendorDataCollection(bytesAVP.getData());
+        // we do not initialize vendorDataCollection because the data of this AVP
+        // might be a vendor specific format (and not the RFC recommanded format)
+        this.vendorDataCollection = null;
     }
     
     public VendorDataCollection getVendorDataCollection()
     {
-        return this.vendorDataCollection;
+        if(null != this.vendorDataCollection)
+        {
+            return this.vendorDataCollection;
+        }
+        else
+        {
+            //TODO should maybe thrown some exception
+            return null;
+        }
     }
 }

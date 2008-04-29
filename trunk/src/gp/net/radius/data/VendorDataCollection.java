@@ -19,30 +19,30 @@ import java.util.List;
  */
 public class VendorDataCollection
 {
-    private List<VendorData> vendorDatas;
+    private List<BytesAVP> bytesAVPs;
     
     private Integer32Array vendorId;
     
-    public VendorDataCollection(int vendorId, List<VendorData> vendorDatas)
+    public VendorDataCollection(int vendorId, List<BytesAVP> vendorDatas)
     {
         this.vendorId = new Integer32Array(0);
         this.setVendorId(vendorId);
-        this.vendorDatas = new LinkedList<VendorData>();
-        this.vendorDatas.addAll(vendorDatas);
+        this.bytesAVPs = new LinkedList<BytesAVP>();
+        this.bytesAVPs.addAll(vendorDatas);
     }
     
     public VendorDataCollection(Array data)
     {
-        this.vendorDatas = new LinkedList<VendorData>();
+        this.bytesAVPs = new LinkedList<BytesAVP>();
 
         this.vendorId = new Integer32Array(new SubArray(data, 0, 4));
         
         int offset = 4;
         while(offset < data.length)
         {
-            VendorData vendorData = new VendorData(new SubArray(data, offset));
-            this.vendorDatas.add(vendorData);
-            offset += vendorData.getLength();
+            BytesAVP bytesAVP = new BytesAVP(new SubArray(data, offset));
+            this.bytesAVPs.add(bytesAVP);
+            offset += bytesAVP.getLength();
         }
     }
     
@@ -56,18 +56,18 @@ public class VendorDataCollection
         this.vendorId.setValue(value);
     }
     
-    public List<VendorData> getvendorDatas()
+    public List<BytesAVP> getBytesAVPs()
     {
-        return Collections.unmodifiableList(vendorDatas);
+        return Collections.unmodifiableList(bytesAVPs);
     }
             
     public Array getArray()
     {
         SupArray array = new SupArray();
         array.addFirst(this.vendorId);
-        for(VendorData vendorData:this.vendorDatas)
+        for(BytesAVP bytesAVP:this.bytesAVPs)
         {
-            array.addLast(vendorData.getArray());
+            array.addLast(bytesAVP.getArray());
         }
         return array;
     }
