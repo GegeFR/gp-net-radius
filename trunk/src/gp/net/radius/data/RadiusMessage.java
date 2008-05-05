@@ -51,25 +51,37 @@ public class RadiusMessage
     public RadiusMessage()
     {
         this.secret = null;
+        
         this.header = new DefaultArray(4);
-        this.avps = new LinkedList<BytesAVP>();
-        this.userPasswordAvps = new LinkedList<BytesAVP>();
+        this.code           = new Integer08Array(new SubArray(this.header, 0, 1));
+        this.identifier     = new Integer08Array(new SubArray(this.header, 1, 1));
+        this.length         = new Integer16Array(new SubArray(this.header, 2, 2));
+
         this.authenticator = null;
+
+        this.avps = new LinkedList<BytesAVP>();
+        
+        this.userPasswordAvps = new LinkedList<BytesAVP>();
+        
         this.setLength(20);
     }
     
     public RadiusMessage(Array data) throws RadiusException
     {
         this.secret = null;
-        this.header = new SubArray(data, 0, 4);
-        this.code = new Integer08Array(new SubArray(this.header, 0, 1));
-        this.identifier = new Integer08Array(new SubArray(this.header, 1, 1));
-        this.length = new Integer16Array(new SubArray(this.header, 2, 2));
-        this.authenticator = new SubArray(data, 4, 16);
+        
+        this.header         = new SubArray(data, 0, 4);
+        this.code           = new Integer08Array(new SubArray(this.header, 0, 1));
+        this.identifier     = new Integer08Array(new SubArray(this.header, 1, 1));
+        this.length         = new Integer16Array(new SubArray(this.header, 2, 2));
+        
+        this.authenticator  = new SubArray(data, 4, 16);
+        
         this.avps = new LinkedList<BytesAVP>();
+        
         this.userPasswordAvps = new LinkedList<BytesAVP>();
         
-        if(this.length.getValue() != data.length)
+        if(this.getLength() != data.length)
         {
             throw new RadiusException("Invalid length of message (" + data.length + ") or invalid length in header (" + this.length.getValue() + ")");
         }
