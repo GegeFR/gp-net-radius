@@ -12,38 +12,48 @@
 
 package gp.net.radius.data;
 
+import gp.net.radius.exceptions.RadiusException;
+import gp.utils.array.impl.Array;
+import gp.utils.array.impl.Integer32Array;
+import gp.utils.array.impl.SupArray;
+
 /**
  *
  * @author gege
  */
 public class VendorSpecificAVP extends BytesAVP
 {
-    private VendorDataCollection vendorDataCollection;
+    private Integer32Array vendorId;
     
-    public VendorSpecificAVP(int code, VendorDataCollection vendorDataCollection)
+    private Array vendorData;
+    
+    public VendorSpecificAVP(int code, int vendorId, Array vendorData)
     {
-        super(code, vendorDataCollection.getArray());
-        this.vendorDataCollection = vendorDataCollection;
+        super(code);
+        this.vendorId = new Integer32Array(vendorId);
+        this.vendorData = vendorData;
+        super.setData(new SupArray().addLast(this.vendorData).addLast(this.vendorData));
     }
 
-    public VendorSpecificAVP(BytesAVP bytesAVP)
+    public VendorSpecificAVP(BytesAVP bytesAVP) throws RadiusException
     {
         super(bytesAVP);
-        // we do not initialize vendorDataCollection because the data of this AVP
-        // might be a vendor specific format (and not the RFC recommanded format)
-        this.vendorDataCollection = null;
+        this.vendorId = new Integer32Array(super.getData().subArray(0, 4));
+        this.vendorData = super.getData().subArray(4);
+        
+        if(super.getLength() < 6)
+        {
+            throw new RadiusException("Invalid length for VendorSpecific AVP (" + super.getLength() + ") minimum is 6: 2 header bytes and 4 VendorId bytes.");
+        }
     }
     
-    public VendorDataCollection getVendorDataCollection()
+    public Array getVendorData()
     {
-        if(null != this.vendorDataCollection)
-        {
-            return this.vendorDataCollection;
-        }
-        else
-        {
-            //TODO should maybe thrown some exception
-            return null;
-        }
+        return this.vendorData;
+    }
+    
+    public int getVendorId()
+    {
+        return this.vendorId.getValue();
     }
 }

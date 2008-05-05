@@ -53,14 +53,16 @@ public class BytesAVP
 
     public BytesAVP(Array bytes) throws RadiusException
     {
-        this.header = new SubArray(bytes, 0, 2);
-        this.code = new Integer08Array(new SubArray(this.header, 0, 1));
-        this.length = new Integer08Array(new SubArray(this.header, 1, 1));
-        this.data = new SubArray(bytes, 2, this.getLength() - 2);
-        
-        if(this.length.getValue() != bytes.length)
+        try
         {
-            throw new RadiusException("Invalid length of datas (" + bytes.length + ") or invalid length in header (" + this.length.getValue() + ")");
+            this.header = new SubArray(bytes, 0, 2);
+            this.code = new Integer08Array(new SubArray(this.header, 0, 1));
+            this.length = new Integer08Array(new SubArray(this.header, 1, 1));
+            this.data = new SubArray(bytes, 2, this.getLength() - 2);
+        }
+        catch(Exception e)
+        {
+            throw new RadiusException("Error while decoding an AVP from an Array. This is probably due to a wrong length header field.", e);
         }
     }
 
