@@ -13,6 +13,7 @@
 package gp.net.radius;
 
 import gp.net.radius.data.RadiusMessage;
+import gp.net.radius.exceptions.RadiusException;
 import gp.utils.array.impl.ReadOnlyDefaultArray;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -84,7 +85,7 @@ public class RadiusSocket
         this.socket.send(datagramPacket);
     }
     
-    public RadiusMessage receive() throws IOException
+    public RadiusMessage receive() throws IOException, RadiusException
     {
         byte[] buffer = new byte[this.bufferSize];
         DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length);
