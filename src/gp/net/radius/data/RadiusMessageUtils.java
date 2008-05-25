@@ -19,7 +19,6 @@ import gp.utils.array.impl.ConstantArray;
 import gp.utils.array.impl.DigestArray;
 import gp.utils.array.impl.Integer64Array;
 import gp.utils.array.impl.RandomArray;
-import gp.utils.array.impl.SubArray;
 import gp.utils.array.impl.SupArray;
 
 /**
