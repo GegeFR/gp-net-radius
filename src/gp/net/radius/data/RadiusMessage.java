@@ -53,9 +53,9 @@ public class RadiusMessage
         this.secret = null;
         
         this.header = new DefaultArray(4);
-        this.code           = new Integer08Array(new SubArray(this.header, 0, 1));
-        this.identifier     = new Integer08Array(new SubArray(this.header, 1, 1));
-        this.length         = new Integer16Array(new SubArray(this.header, 2, 2));
+        this.code           = new Integer08Array(this.header.subArray(0, 1));
+        this.identifier     = new Integer08Array(this.header.subArray(1, 1));
+        this.length         = new Integer16Array(this.header.subArray(2, 2));
 
         this.authenticator = null;
 
@@ -70,12 +70,12 @@ public class RadiusMessage
     {
         this.secret = null;
         
-        this.header         = new SubArray(data, 0, 4);
-        this.code           = new Integer08Array(new SubArray(this.header, 0, 1));
-        this.identifier     = new Integer08Array(new SubArray(this.header, 1, 1));
-        this.length         = new Integer16Array(new SubArray(this.header, 2, 2));
+        this.header         = data.subArray(0, 4);
+        this.code           = new Integer08Array(this.header.subArray(0, 1));
+        this.identifier     = new Integer08Array(this.header.subArray(1, 1));
+        this.length         = new Integer16Array(this.header.subArray(2, 2));
         
-        this.authenticator  = new SubArray(data, 4, 16);
+        this.authenticator  = data.subArray(4, 16);
         
         this.avps = new LinkedList<BytesAVP>();
         
@@ -90,7 +90,7 @@ public class RadiusMessage
         int length = this.getLength();
         while(offset < length)
         {
-            BytesAVP avp = new BytesAVP(new SubArray(data, offset));
+            BytesAVP avp = new BytesAVP(data.subArray(offset));
             offset += avp.getLength();
             this.addAVP(avp, false);
         }

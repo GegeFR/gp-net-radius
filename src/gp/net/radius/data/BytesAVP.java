@@ -34,8 +34,8 @@ public class BytesAVP
     public BytesAVP()
     {
         header = new DefaultArray(2);
-        this.code = new Integer08Array(new SubArray(this.header, 0, 1));
-        this.length = new Integer08Array(new SubArray(this.header, 1, 1));
+        this.code = new Integer08Array(this.header.subArray(0, 1));
+        this.length = new Integer08Array(this.header.subArray(1, 1));
         this.setLength(this.header.length);
     }
 
@@ -55,10 +55,10 @@ public class BytesAVP
     {
         try
         {
-            this.header = new SubArray(bytes, 0, 2);
-            this.code = new Integer08Array(new SubArray(this.header, 0, 1));
-            this.length = new Integer08Array(new SubArray(this.header, 1, 1));
-            this.data = new SubArray(bytes, 2, this.getLength() - 2);
+            this.header = bytes.subArray(0, 2);
+            this.code   = new Integer08Array(this.header.subArray(0, 1));
+            this.length = new Integer08Array(this.header.subArray(1, 1));
+            this.data   = bytes.subArray(2, this.getLength() - 2);
         }
         catch(Exception e)
         {

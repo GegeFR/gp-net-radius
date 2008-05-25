@@ -55,7 +55,7 @@ public class RadiusMessageUtils
         {
             if(userPassword.get(i) != 0) lastNonZero++;
         }
-        return new SubArray(userPassword, 0, lastNonZero);
+        return userPassword.subArray(0, lastNonZero);
     }
     
     static public Array encodeUserPassword(Array authenticator, Array secret, Array userPassword)
@@ -65,7 +65,7 @@ public class RadiusMessageUtils
         SupArray result = new SupArray();
         while(result.length < userPassword.length)
         {
-            data = new BitwiseXorArray(new DigestArray(data, "MD5"), new SubArray(userPassword, result.length, 16));
+            data = new BitwiseXorArray(new DigestArray(data, "MD5"), userPassword.subArray(result.length, 16));
             result.addLast(data);
         }
         return result;
@@ -84,13 +84,13 @@ public class RadiusMessageUtils
         
         while(position > 16)
         {
-            Array data = new SupArray().addLast(secret).addLast(new SubArray(userPassword, position - 32, 16));
-            result.addFirst(new BitwiseXorArray(new DigestArray(data, "MD5"), new SubArray(userPassword, position-16, 16)));
+            Array data = new SupArray().addLast(secret).addLast(userPassword.subArray(position - 32, 16));
+            result.addFirst(new BitwiseXorArray(new DigestArray(data, "MD5"), userPassword.subArray(position-16, 16)));
             position -= 16;
         }
 
         Array data = new SupArray().addLast(secret).addLast(authenticator);
-        data = new BitwiseXorArray(new DigestArray(data, "MD5"), new SubArray(userPassword, position-16, 16));
+        data = new BitwiseXorArray(new DigestArray(data, "MD5"), userPassword.subArray(position-16, 16));
         result.addFirst(data);
         
         return result;
