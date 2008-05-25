@@ -25,7 +25,7 @@ public class RadiusSocketTest
 
             RadiusSocket server = new RadiusSocket(12345);
 
-            long nombre = 1;
+            long nombre = 100000;
 
             long timestamp = System.currentTimeMillis();
             for (long i = 0; i < nombre; i++)
@@ -88,8 +88,8 @@ public class RadiusSocketTest
                 RadiusMessage responseReceived = client.receive();
 
                 responseReceived.setSecret(new DefaultArray("totosecret".getBytes()));
-
-                System.out.println("responseReceived.hasValidResponseAuthenticator() ... " + responseReceived.hasValidResponseAuthenticator(requestSent.getAuthenticator()));
+                responseReceived.hasValidResponseAuthenticator(requestSent.getAuthenticator());
+//System.out.println("responseReceived.hasValidResponseAuthenticator() ... " + responseReceived.hasValidResponseAuthenticator(requestSent.getAuthenticator()));
 //
 //            
 //            System.out.println("\ndecrypted");

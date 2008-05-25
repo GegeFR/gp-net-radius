@@ -92,7 +92,7 @@ public class RadiusSocket
         
         socket.receive(datagramPacket);
 
-        RadiusMessage radiusMessage = new RadiusMessage(new ReadOnlyDefaultArray(datagramPacket.getData()));
+        RadiusMessage radiusMessage = new RadiusMessage(new ReadOnlyDefaultArray(datagramPacket.getData(), datagramPacket.getOffset(), datagramPacket.getLength()));
         radiusMessage.setRemoteAddress((InetSocketAddress) datagramPacket.getSocketAddress());
         radiusMessage.setLocalAddress((InetSocketAddress) this.socket.getLocalSocketAddress());
 

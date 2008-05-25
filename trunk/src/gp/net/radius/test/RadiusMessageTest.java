@@ -21,7 +21,7 @@ public class RadiusMessageTest
         try
         {
             long timestamp = System.currentTimeMillis();
-            long nombre = 1;
+            long nombre = 100000;
             long dataVolume = 0;
             for (long i = 0; i < nombre; i++)
             {
@@ -45,7 +45,7 @@ public class RadiusMessageTest
                     message.encodeUserPasswordAvps();
                 }
                 dataVolume += message.getArray().getBytes().length;
-                System.out.println(message.getArray());
+                //System.out.println(message.getArray());
 
             }
 
