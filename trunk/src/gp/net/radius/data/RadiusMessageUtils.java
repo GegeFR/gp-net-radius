@@ -13,13 +13,13 @@
 package gp.net.radius.data;
 
 
-import gp.utils.array.impl.Array;
-import gp.utils.array.impl.BitwiseXorArray;
-import gp.utils.array.impl.ConstantArray;
-import gp.utils.array.impl.DigestArray;
-import gp.utils.array.impl.Integer64Array;
-import gp.utils.array.impl.RandomArray;
-import gp.utils.array.impl.SupArray;
+import gp.utils.arrays.Array;
+import gp.utils.arrays.BitwiseXorArray;
+import gp.utils.arrays.ConstantArray;
+import gp.utils.arrays.DigestArray;
+import gp.utils.arrays.Integer64Array;
+import gp.utils.arrays.RandomArray;
+import gp.utils.arrays.SupArray;
 
 /**
  *

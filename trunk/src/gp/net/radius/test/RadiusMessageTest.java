@@ -6,7 +6,7 @@ package gp.net.radius.test;
 
 import gp.net.radius.data.RadiusMessage;
 import gp.net.radius.data.StringAVP;
-import gp.utils.array.impl.DefaultArray;
+import gp.utils.arrays.DefaultArray;
 import java.util.Arrays;
 
 /**

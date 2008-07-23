@@ -9,8 +9,8 @@ import gp.net.radius.data.BytesAVP;
 import gp.net.radius.data.IntegerAVP;
 import gp.net.radius.data.RadiusMessage;
 import gp.net.radius.data.StringAVP;
-import gp.utils.array.impl.Array;
-import gp.utils.array.impl.ReadOnlyDefaultArray;
+import gp.utils.arrays.Array;
+import gp.utils.arrays.ReadOnlyDefaultArray;
 import java.net.InetAddress;
 
 /**

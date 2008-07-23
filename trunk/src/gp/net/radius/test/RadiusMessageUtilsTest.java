@@ -5,8 +5,8 @@
 package gp.net.radius.test;
 
 import gp.net.radius.data.RadiusMessageUtils;
-import gp.utils.array.impl.Array;
-import gp.utils.array.impl.DefaultArray;
+import gp.utils.arrays.Array;
+import gp.utils.arrays.DefaultArray;
 
 /**
  *
