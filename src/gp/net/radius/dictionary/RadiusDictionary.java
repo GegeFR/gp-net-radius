@@ -12,7 +12,7 @@
 
 package gp.net.radius.dictionary;
 
-import gp.utils.exception.AssociationHashMapUniquenessException;
+import gp.utils.map.AssociationHashMapUniquenessException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;

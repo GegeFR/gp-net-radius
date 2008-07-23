@@ -12,7 +12,7 @@
 
 package gp.net.radius.data;
 
-import gp.utils.array.impl.DefaultArray;
+import gp.utils.arrays.DefaultArray;
 import java.io.UnsupportedEncodingException;
 
 /**

@@ -12,7 +12,7 @@
 
 package gp.net.radius.dictionary;
 
-import gp.utils.exception.AssociationHashMapUniquenessException;
+import gp.utils.map.AssociationHashMapUniquenessException;
 import gp.utils.map.AssociationHashMap;
 
 /**

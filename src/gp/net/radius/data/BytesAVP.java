@@ -13,11 +13,10 @@
 package gp.net.radius.data;
 
 import gp.net.radius.exceptions.RadiusException;
-import gp.utils.array.impl.Array;
-import gp.utils.array.impl.DefaultArray;
-import gp.utils.array.impl.Integer08Array;
-import gp.utils.array.impl.SubArray;
-import gp.utils.array.impl.SupArray;
+import gp.utils.arrays.Array;
+import gp.utils.arrays.DefaultArray;
+import gp.utils.arrays.Integer08Array;
+import gp.utils.arrays.SupArray;
 
 /**
  *

@@ -14,7 +14,7 @@ package gp.net.radius;
 
 import gp.net.radius.data.RadiusMessage;
 import gp.net.radius.exceptions.RadiusException;
-import gp.utils.array.impl.ReadOnlyDefaultArray;
+import gp.utils.arrays.ReadOnlyDefaultArray;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;

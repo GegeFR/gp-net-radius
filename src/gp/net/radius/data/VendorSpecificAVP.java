@@ -13,9 +13,9 @@
 package gp.net.radius.data;
 
 import gp.net.radius.exceptions.RadiusException;
-import gp.utils.array.impl.Array;
-import gp.utils.array.impl.Integer32Array;
-import gp.utils.array.impl.SupArray;
+import gp.utils.arrays.Array;
+import gp.utils.arrays.Integer32Array;
+import gp.utils.arrays.SupArray;
 
 /**
  *
