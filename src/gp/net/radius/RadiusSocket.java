@@ -22,8 +22,8 @@ import java.net.InetSocketAddress;
 import java.net.SocketException;
 
 /**
- *
- * @author gege
+ * This class is used to send and receive Radius messages over a DatagramSocket.
+ * @author Gwenhael Pasquiers
  */
 public class RadiusSocket
 {
@@ -31,21 +31,41 @@ public class RadiusSocket
     
     private int bufferSize;
     
+    /**
+     * Creates a RadiusSocket bound to all interfaces and any port.<br/>
+     * @throws java.net.SocketException
+     */
     public RadiusSocket() throws SocketException
     {
         this("0.0.0.0", 0);
     }
 
+    /**
+     * Creates a RadiusSocket bound to <code>localhost</code> interface and to any port.
+     * @param localhost the address this socket will be bound to
+     * @throws java.net.SocketException
+     */
     public RadiusSocket(String localhost) throws SocketException
     {
         this(localhost, 0);
     }
 
+    /**
+     * Creates a RadiusSocket bound to all interfaces and <code>port</code> port.
+     * @param port the port this socket will be bound to
+     * @throws java.net.SocketException
+     */
     public RadiusSocket(int port) throws SocketException
     {
         this("0.0.0.0", port);
     }
-
+    
+    /**
+     * Creates a RadiusSocket bound to <code>localhost</code> interface and <code>port</code> port.
+     * @param localhost the address this socket will be bound to
+     * @param port the port this socket will be bound to
+     * @throws java.net.SocketException
+     */
     public RadiusSocket(String localhost, int port) throws SocketException
     {
         this.bufferSize = 4 * 1024;
@@ -57,7 +77,7 @@ public class RadiusSocket
         this.bufferSize = size;
     }
     
-    public int getPort()
+    public int getLocalPort()
     {
         return this.socket.getLocalPort();
     }
@@ -68,18 +88,9 @@ public class RadiusSocket
         
         if(null == radiusMessage.getRemoteAddress())
         {
-            throw new SocketException("Can't send message, DstSocketAddress is null");
+            throw new SocketException("Can't send message, remote address is null");
         }
         
-        byte[] buffer = radiusMessage.getArray().getBytes();
-        DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length, radiusMessage.getRemoteAddress());
-        this.socket.send(datagramPacket);
-    }
-
-    public void send(RadiusMessage radiusMessage, String remoteHost, int remotePort) throws SocketException, IOException
-    {
-        radiusMessage.setLocalAddress((InetSocketAddress) this.socket.getLocalSocketAddress());
-        radiusMessage.setRemoteAddress(new InetSocketAddress(remoteHost, remotePort));
         byte[] buffer = radiusMessage.getArray().getBytes();
         DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length, radiusMessage.getRemoteAddress());
         this.socket.send(datagramPacket);
@@ -99,11 +110,18 @@ public class RadiusSocket
         return radiusMessage;
     }
     
+    /**
+     * Close the underlying DatagramSocket.
+     */
     public void close()
     {
         this.socket.close();
     }
     
+    /**
+     * Status of the socket.
+     * @return true if the underlying DatagramSocket is not closed
+     */
     public boolean isOpen()
     {
         return !this.socket.isClosed();

@@ -5,17 +5,17 @@
 
 package gp.net.radius.test;
 
-import gp.net.radius.data.BytesAVP;
-import gp.net.radius.data.IntegerAVP;
+import gp.net.radius.data.AVPBytes;
+import gp.net.radius.data.AVPInteger;
 import gp.net.radius.data.RadiusMessage;
-import gp.net.radius.data.StringAVP;
+import gp.net.radius.data.AVPString;
 import gp.utils.arrays.Array;
 import gp.utils.arrays.ReadOnlyDefaultArray;
 import java.net.InetAddress;
 
 /**
  *
- * @author gege
+ * @author Gwenhael Pasquiers
  */
 public class FunctionalTest
 {
@@ -93,10 +93,10 @@ public class FunctionalTest
             request.setAuthenticator(auth);
             request.setSecret(new ReadOnlyDefaultArray("xyzzy5461".getBytes()));
             
-            request.addAVP(new StringAVP(1, "nemo", "UTF-8"));
-            request.addAVP(new StringAVP(2, "arctangent", "UTF-8"));
-            request.addAVP(new BytesAVP(4, new ReadOnlyDefaultArray(InetAddress.getByName("192.168.1.16").getAddress())));
-            request.addAVP(new IntegerAVP(5, 3));
+            request.addAVP(new AVPString(1, "nemo", "UTF-8"));
+            request.addAVP(new AVPString(2, "arctangent", "UTF-8"));
+            request.addAVP(new AVPBytes(4, new ReadOnlyDefaultArray(InetAddress.getByName("192.168.1.16").getAddress())));
+            request.addAVP(new AVPInteger(5, 3));
 
             request.encodeUserPasswordAvps();
 
@@ -111,9 +111,9 @@ public class FunctionalTest
             response.setIdentifier(0);
             response.setSecret(new ReadOnlyDefaultArray("xyzzy5461".getBytes()));
             
-            response.addAVP(new IntegerAVP(6, 1));
-            response.addAVP(new IntegerAVP(15, 0));
-            response.addAVP(new BytesAVP(14, new ReadOnlyDefaultArray(InetAddress.getByName("192.168.1.3").getAddress())));
+            response.addAVP(new AVPInteger(6, 1));
+            response.addAVP(new AVPInteger(15, 0));
+            response.addAVP(new AVPBytes(14, new ReadOnlyDefaultArray(InetAddress.getByName("192.168.1.3").getAddress())));
             
             response.computeResponseAuthenticator(request.getAuthenticator());
 

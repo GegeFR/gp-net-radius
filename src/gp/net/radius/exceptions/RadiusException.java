@@ -14,11 +14,12 @@ package gp.net.radius.exceptions;
 
 /**
  *
- * @author gege
+ * @author Gwenhael Pasquiers
  */
 public class RadiusException extends Exception
 {
     public RadiusException(){super();}
+    public RadiusException(Exception e){super(e);}
     public RadiusException(String message){super(message);}
     public RadiusException(String message, Exception e){super(message, e);}
 }

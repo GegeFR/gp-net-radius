@@ -12,29 +12,31 @@
 
 package gp.net.radius.data;
 
-import gp.utils.arrays.Integer32Array;
+import gp.utils.arrays.DefaultArray;
+import java.io.UnsupportedEncodingException;
 
 /**
  *
- * @author gege
+ * @author Gwenhael Pasquiers
  */
-public class IntegerAVP extends BytesAVP
+public class AVPString extends AVPBytes
 {
-    public IntegerAVP(int type, int value)
+    String encoding;
+    
+    public AVPString(int type, String data, String encoding) throws UnsupportedEncodingException
     {
-        super(type, new Integer32Array(value));
-    }
-
-    public IntegerAVP(BytesAVP bytesAVP)
-    {
-        super(bytesAVP);
+        super(type, new DefaultArray(data.getBytes(encoding)));
+        this.encoding = encoding;
     }
     
-    public int getValue()
+    public AVPString(AVPBytes bytesAVP, String encoding)
     {
-        return ((this.getData().get(0) & 0xFF) << 24) + 
-               ((this.getData().get(1) & 0xFF) << 16) +
-               ((this.getData().get(1) & 0xFF) << 8) +
-               (this.getData().get(3) & 0xFF);
+        super(bytesAVP);
+        this.encoding = encoding;
+    }
+
+    public String getValue() throws UnsupportedEncodingException
+    {
+        return new String(super.getData().getBytes(), this.encoding);
     }
 }
