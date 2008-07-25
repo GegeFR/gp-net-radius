@@ -23,7 +23,7 @@ import gp.utils.arrays.SupArray;
 
 /**
  *
- * @author gege
+ * @author Gwenhael Pasquiers
  */
 public class RadiusMessageUtils
 {

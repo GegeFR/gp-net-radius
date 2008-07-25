@@ -20,9 +20,9 @@ import gp.utils.arrays.SupArray;
 
 /**
  *
- * @author gege
+ * @author Gwenhael Pasquiers
  */
-public class BytesAVP
+public class AVPBytes
 {
 
     private Array header;
@@ -30,7 +30,7 @@ public class BytesAVP
     private Integer08Array length;
     private Array data;
 
-    public BytesAVP()
+    public AVPBytes()
     {
         header = new DefaultArray(2);
         this.code = new Integer08Array(this.header.subArray(0, 1));
@@ -38,19 +38,19 @@ public class BytesAVP
         this.setLength(this.header.length);
     }
 
-    public BytesAVP(int type)
+    public AVPBytes(int type)
     {
         this();
         this.setType(type);
     }
 
-    public BytesAVP(int type, Array data)
+    public AVPBytes(int type, Array data)
     {
         this(type);
         this.setData(data);
     }
 
-    public BytesAVP(Array bytes) throws RadiusException
+    public AVPBytes(Array bytes) throws RadiusException
     {
         try
         {
@@ -65,7 +65,7 @@ public class BytesAVP
         }
     }
 
-    public BytesAVP(BytesAVP bytesAVP)
+    public AVPBytes(AVPBytes bytesAVP)
     {
         this.header = bytesAVP.header;
         this.data = bytesAVP.data;

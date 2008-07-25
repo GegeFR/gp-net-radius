@@ -19,15 +19,15 @@ import gp.utils.arrays.SupArray;
 
 /**
  *
- * @author gege
+ * @author Gwenhael Pasquiers
  */
-public class VendorSpecificAVP extends BytesAVP
+public class AVPVendorSpecific extends AVPBytes
 {
     private Integer32Array vendorId;
     
     private Array vendorData;
     
-    public VendorSpecificAVP(int code, int vendorId, Array vendorData)
+    public AVPVendorSpecific(int code, int vendorId, Array vendorData)
     {
         super(code);
         this.vendorId = new Integer32Array(vendorId);
@@ -35,7 +35,7 @@ public class VendorSpecificAVP extends BytesAVP
         super.setData(new SupArray().addLast(this.vendorData).addLast(this.vendorData));
     }
 
-    public VendorSpecificAVP(BytesAVP bytesAVP) throws RadiusException
+    public AVPVendorSpecific(AVPBytes bytesAVP) throws RadiusException
     {
         super(bytesAVP);
         this.vendorId = new Integer32Array(super.getData().subArray(0, 4));

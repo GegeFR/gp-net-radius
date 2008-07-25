@@ -26,7 +26,7 @@ import java.util.LinkedList;
 
 /**
  *
- * @author gege
+ * @author Gwenhael Pasquiers
  */
 public class RadiusMessage
 {
@@ -39,9 +39,9 @@ public class RadiusMessage
     
     private Array secret;
     
-    private LinkedList<BytesAVP> avps;
+    private LinkedList<AVPBytes> avps;
 
-    private LinkedList<BytesAVP> userPasswordAvps;
+    private LinkedList<AVPBytes> userPasswordAvps;
     
     private InetSocketAddress localAddress;
     
@@ -58,9 +58,9 @@ public class RadiusMessage
 
         this.authenticator = null;
 
-        this.avps = new LinkedList<BytesAVP>();
+        this.avps = new LinkedList<AVPBytes>();
         
-        this.userPasswordAvps = new LinkedList<BytesAVP>();
+        this.userPasswordAvps = new LinkedList<AVPBytes>();
         
         this.setLength(20);
     }
@@ -76,9 +76,9 @@ public class RadiusMessage
         
         this.authenticator  = data.subArray(4, 16);
         
-        this.avps = new LinkedList<BytesAVP>();
+        this.avps = new LinkedList<AVPBytes>();
         
-        this.userPasswordAvps = new LinkedList<BytesAVP>();
+        this.userPasswordAvps = new LinkedList<AVPBytes>();
         
         if(this.getLength() != data.length)
         {
@@ -89,7 +89,7 @@ public class RadiusMessage
         int length = this.getLength();
         while(offset < length)
         {
-            BytesAVP avp = new BytesAVP(data.subArray(offset));
+            AVPBytes avp = new AVPBytes(data.subArray(offset));
             offset += avp.getLength();
             this.addAVP(avp, false);
         }
@@ -145,12 +145,12 @@ public class RadiusMessage
        return authenticator;
     }
 
-    public void addAVP(BytesAVP avp)
+    public void addAVP(AVPBytes avp)
     {
         this.addAVP(avp, true);
     }
 
-    private void addAVP(BytesAVP avp, boolean setLength)
+    private void addAVP(AVPBytes avp, boolean setLength)
     {
         // special behavior for User-Password AVP
         if(avp.getType() == 2)
@@ -166,7 +166,7 @@ public class RadiusMessage
         }
     }
     
-    public Iterator<BytesAVP> getAVPs()
+    public Iterator<AVPBytes> getAVPs()
     {
         return this.avps.iterator();
     }
@@ -176,7 +176,7 @@ public class RadiusMessage
         this.assertAccessRequest();
         this.assertSecretPresent();
         this.assertAuthenticatorPresent();
-        for(BytesAVP userPasswordAvp:userPasswordAvps)
+        for(AVPBytes userPasswordAvp:userPasswordAvps)
         {
             userPasswordAvp.setData(RadiusMessageUtils.encodeUserPassword(this.authenticator, this.secret, userPasswordAvp.getData()));
         }
@@ -187,7 +187,7 @@ public class RadiusMessage
         this.assertAccessRequest();
         this.assertSecretPresent();
         this.assertAuthenticatorPresent();
-        for(BytesAVP userPasswordAvp:userPasswordAvps)
+        for(AVPBytes userPasswordAvp:userPasswordAvps)
         {
             userPasswordAvp.setData(RadiusMessageUtils.decodeUserPassword(this.authenticator, this.secret, userPasswordAvp.getData()));
         }
@@ -230,7 +230,7 @@ public class RadiusMessage
     {
         this.assertSecretPresent();
         SupArray temp = new SupArray().addLast(this.header).addLast(inputAuthenticator);
-        for(BytesAVP avp:avps)
+        for(AVPBytes avp:avps)
         {
             temp.addLast(avp.getArray());
         }
@@ -245,7 +245,7 @@ public class RadiusMessage
         SupArray array = new SupArray();
         array.addLast(this.header);
         array.addLast(this.authenticator);
-        for(BytesAVP avp:avps)
+        for(AVPBytes avp:avps)
         {
             array.addLast(avp.getArray());
         }

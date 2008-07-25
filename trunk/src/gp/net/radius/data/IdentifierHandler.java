@@ -19,7 +19,7 @@ import java.util.Set;
 
 /**
  *
- * @author gege
+ * @author Gwenhael Pasquiers
  */
 public class IdentifierHandler
 {

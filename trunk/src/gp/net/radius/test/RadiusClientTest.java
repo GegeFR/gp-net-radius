@@ -4,6 +4,7 @@
  */
 package gp.net.radius.test;
 
+import gp.net.radius.RadiusClient;
 import gp.net.radius.RadiusSocket;
 import gp.net.radius.data.AVPBytes;
 import gp.net.radius.data.RadiusMessage;
@@ -14,7 +15,7 @@ import java.net.InetSocketAddress;
  *
  * @author Gwenhael Pasquiers
  */
-public class RadiusSocketTest
+public class RadiusClientTest
 {
 
     static public void main(String... args)
@@ -22,16 +23,17 @@ public class RadiusSocketTest
         try
         {
             RadiusSocket client = new RadiusSocket();
-
+            final RadiusClient radiusClient = new RadiusClient(client);
+            
             RadiusSocket server = new RadiusSocket(12345);
 
-            long nombre = 100000;
+            long nombre = 1;
 
             long timestamp = System.currentTimeMillis();
             for (long i = 0; i < nombre; i++)
             {
 
-                RadiusMessage requestSent = new RadiusMessage();
+                final RadiusMessage requestSent = new RadiusMessage();
                 requestSent.setCode(1);
                 requestSent.setIdentifier(22);
 
@@ -56,13 +58,35 @@ public class RadiusSocketTest
                 //System.out.println("\nencrypted");
                 //System.out.println(requestSent.getArray());
 
-                client.send(requestSent);
+                Runnable runnable = new Runnable()
+                {
+                    public void run()
+                    {
+                        try
+                        {
+                            System.out.println("send");
+                            radiusClient.send(requestSent);    
+                            System.out.println("sended");
+                        }
+                        catch(Exception e)
+                        {
+                            e.printStackTrace();
+                        }
+                        
+                    }
+                };
+                Thread thread = new Thread(runnable);
+                thread.start();
 
                 //System.out.println("\nsent");
                 //System.out.println(requestSent.getArray());
 
                 RadiusMessage requestReceived = server.receive();
-
+ requestReceived = server.receive();
+  requestReceived = server.receive();
+  requestReceived = server.receive();
+  requestReceived = server.receive();
+  requestReceived = server.receive();
 //            System.out.println("\nreceived");
 //            System.out.println(requestReceived.getArray());
 
@@ -84,16 +108,6 @@ public class RadiusSocketTest
 
 
                 server.send(responseSent);
-
-                RadiusMessage responseReceived = client.receive();
-
-                responseReceived.setSecret(new DefaultArray("totosecret".getBytes()));
-                responseReceived.hasValidResponseAuthenticator(requestSent.getAuthenticator());
-//System.out.println("responseReceived.hasValidResponseAuthenticator() ... " + responseReceived.hasValidResponseAuthenticator(requestSent.getAuthenticator()));
-//
-//            
-//            System.out.println("\ndecrypted");
-//            System.out.println(requestReceived.getArray());
 
             }
 

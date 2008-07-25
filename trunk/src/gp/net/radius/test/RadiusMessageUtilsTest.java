@@ -10,7 +10,7 @@ import gp.utils.arrays.DefaultArray;
 
 /**
  *
- * @author gege
+ * @author Gwenhael Pasquiers
  */
 public class RadiusMessageUtilsTest
 {

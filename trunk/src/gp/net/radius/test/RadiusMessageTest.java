@@ -5,13 +5,12 @@
 package gp.net.radius.test;
 
 import gp.net.radius.data.RadiusMessage;
-import gp.net.radius.data.StringAVP;
+import gp.net.radius.data.AVPString;
 import gp.utils.arrays.DefaultArray;
-import java.util.Arrays;
 
 /**
  *
- * @author gege
+ * @author Gwenhael Pasquiers
  */
 public class RadiusMessageTest
 {
@@ -29,14 +28,14 @@ public class RadiusMessageTest
                 message.setCode(1);
                 message.setIdentifier(22);
 
-                message.addAVP(new StringAVP(1, "1234", "UTF-8"));
-                message.addAVP(new StringAVP(2, "5678", "UTF-8"));
-                message.addAVP(new StringAVP(1, "1234", "UTF-8"));
-                message.addAVP(new StringAVP(1, "1234", "UTF-8"));
-                message.addAVP(new StringAVP(1, "1234", "UTF-8"));
-                message.addAVP(new StringAVP(1, "1234", "UTF-8"));
-                message.addAVP(new StringAVP(1, "1234", "UTF-8"));
-                message.addAVP(new StringAVP(1, "1234", "UTF-8"));
+                message.addAVP(new AVPString(1, "1234", "UTF-8"));
+                message.addAVP(new AVPString(2, "5678", "UTF-8"));
+                message.addAVP(new AVPString(1, "1234", "UTF-8"));
+                message.addAVP(new AVPString(1, "1234", "UTF-8"));
+                message.addAVP(new AVPString(1, "1234", "UTF-8"));
+                message.addAVP(new AVPString(1, "1234", "UTF-8"));
+                message.addAVP(new AVPString(1, "1234", "UTF-8"));
+                message.addAVP(new AVPString(1, "1234", "UTF-8"));
 
                 message.setSecret(new DefaultArray("secret".getBytes()));
                 message.computeRequestAuthenticator();

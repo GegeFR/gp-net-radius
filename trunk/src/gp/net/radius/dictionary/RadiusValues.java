@@ -17,7 +17,7 @@ import gp.utils.map.AssociationHashMap;
 
 /**
  *
- * @author gege
+ * @author Gwenhael Pasquiers
  */
 public class RadiusValues
 {

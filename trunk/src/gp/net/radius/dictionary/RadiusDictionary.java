@@ -22,7 +22,7 @@ import java.util.LinkedList;
 
 /**
  *
- * @author gege
+ * @author Gwenhael Pasquiers
  */
 public class RadiusDictionary
 {
