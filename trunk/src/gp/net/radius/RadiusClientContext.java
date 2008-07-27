@@ -41,7 +41,7 @@ public class RadiusClientContext {
         for(int i=0; i<256; i++) this.identifiers.offer(i);
     }
     
-    public RadiusClientTransaction createTransaction(RadiusMessage request) throws RadiusException
+    public RadiusClientTransaction createTransaction(RadiusMessage request,RadiusClientRetransmissionParameters radiusClientRetransmissionParameters) throws RadiusException
     {
         Integer identifier = this.identifiers.poll();
         
@@ -51,7 +51,7 @@ public class RadiusClientContext {
         request.computeRequestAuthenticator();
         request.encodeUserPasswordAvps();
         
-        RadiusClientTransaction radiusClientTransaction = new RadiusClientTransaction(request, this.radiusSocket, this);
+        RadiusClientTransaction radiusClientTransaction = new RadiusClientTransaction(request, this.radiusSocket, this, radiusClientRetransmissionParameters);
         
         this.transactions.put(identifier, radiusClientTransaction);
         

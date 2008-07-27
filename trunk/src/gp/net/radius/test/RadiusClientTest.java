@@ -5,6 +5,7 @@
 package gp.net.radius.test;
 
 import gp.net.radius.RadiusClient;
+import gp.net.radius.RadiusClientRetransmissionParameters;
 import gp.net.radius.RadiusSocket;
 import gp.net.radius.data.AVPBytes;
 import gp.net.radius.data.RadiusMessage;
@@ -23,7 +24,7 @@ public class RadiusClientTest
         try
         {
             RadiusSocket client = new RadiusSocket();
-            final RadiusClient radiusClient = new RadiusClient(client);
+            final RadiusClient radiusClient =  new RadiusClient(client);
             
             RadiusSocket server = new RadiusSocket(12345);
 
@@ -65,7 +66,7 @@ public class RadiusClientTest
                         try
                         {
                             System.out.println("send");
-                            radiusClient.send(requestSent);    
+                            radiusClient.send(requestSent, new RadiusClientRetransmissionParameters());    
                             System.out.println("sended");
                         }
                         catch(Exception e)
