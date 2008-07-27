@@ -30,7 +30,6 @@ public class RadiusClient
     {
         this.radiusSocket = radiusSocket;
         this.contexts = new HashMap<String, RadiusClientContext>();
-        
         final RadiusClient _this = this;
         Runnable runnable = new Runnable()
         {
@@ -71,7 +70,7 @@ public class RadiusClient
         thread.start();
     }
     
-    public RadiusMessage send(RadiusMessage request) throws RadiusException
+    public RadiusMessage send(RadiusMessage request, RadiusClientRetransmissionParameters radiusClientRetransmissionParameters) throws RadiusException
     {
         RadiusClientContext context;
         
@@ -86,6 +85,6 @@ public class RadiusClient
             }
         }
         
-        return context.createTransaction(request).waitResponse();
+        return context.createTransaction(request, radiusClientRetransmissionParameters).waitResponse();
     }
 }
