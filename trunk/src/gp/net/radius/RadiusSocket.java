@@ -13,6 +13,7 @@
 package gp.net.radius;
 
 import gp.net.radius.data.RadiusMessage;
+import gp.net.radius.data.RadiusMessageUtils;
 import gp.net.radius.exceptions.RadiusException;
 import gp.utils.arrays.ReadOnlyDefaultArray;
 import java.io.IOException;
@@ -20,6 +21,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
+import java.util.logging.Level;
 
 /**
  * This class is used to send and receive Radius messages over a DatagramSocket.
@@ -106,6 +108,8 @@ public class RadiusSocket
         RadiusMessage radiusMessage = new RadiusMessage(new ReadOnlyDefaultArray(datagramPacket.getData(), datagramPacket.getOffset(), datagramPacket.getLength()));
         radiusMessage.setRemoteAddress((InetSocketAddress) datagramPacket.getSocketAddress());
         radiusMessage.setLocalAddress((InetSocketAddress) this.socket.getLocalSocketAddress());
+        
+        if(RadiusLogger.logger.isLoggable(Level.FINE)) RadiusLogger.logger.log(Level.FINE, "received message (undecoded)\n" + RadiusMessageUtils.toString(radiusMessage));
 
         return radiusMessage;
     }

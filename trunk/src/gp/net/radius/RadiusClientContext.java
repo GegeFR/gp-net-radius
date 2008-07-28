@@ -13,9 +13,11 @@
 package gp.net.radius;
 
 import gp.net.radius.data.RadiusMessage;
+import gp.net.radius.data.RadiusMessageUtils;
 import gp.net.radius.exceptions.RadiusException;
 import java.util.HashMap;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Level;
 
 /**
  * A RadiusClientContext is associated to a specific remote host:port.<br/>
@@ -67,7 +69,7 @@ public class RadiusClientContext {
         }
         else
         {
-            System.err.println("DEBUG: silentily discarding response (no transaction)");
+            if(RadiusLogger.logger.isLoggable(Level.WARNING)) RadiusLogger.logger.log(Level.WARNING, "silently discarding response (unknown transaction)\n" + RadiusMessageUtils.toString(response));
         }
     }
     

@@ -21,8 +21,9 @@ import gp.utils.arrays.Integer08Array;
 import gp.utils.arrays.Integer16Array;
 import gp.utils.arrays.SupArray;
 import java.net.InetSocketAddress;
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
@@ -166,9 +167,9 @@ public class RadiusMessage
         }
     }
     
-    public Iterator<AVPBytes> getAVPs()
+    public List<AVPBytes> getAVPs()
     {
-        return this.avps.iterator();
+        return Collections.unmodifiableList(avps);
     }
 
     public void encodeUserPasswordAvps()

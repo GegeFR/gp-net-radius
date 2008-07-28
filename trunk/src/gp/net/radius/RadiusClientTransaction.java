@@ -13,10 +13,12 @@
 package gp.net.radius;
 
 import gp.net.radius.data.RadiusMessage;
+import gp.net.radius.data.RadiusMessageUtils;
 import gp.net.radius.exceptions.RadiusException;
 import gp.utils.scheduler.Scheduler;
 import gp.utils.scheduler.Task;
 import java.util.concurrent.Semaphore;
+import java.util.logging.Level;
 
 /**
  *
@@ -55,17 +57,28 @@ public class RadiusClientTransaction
             {
                 long now = System.currentTimeMillis();
                 
-                if(null != _this.radiusClientTransactionResult) return;
+                if(null != _this.radiusClientTransactionResult)
+                {
+                    if(RadiusLogger.logger.isLoggable(Level.FINE)) RadiusLogger.logger.log(Level.FINE, "stop retransmitting, radiusClientTransactionResult is not null");
+                    return;
+                }
                 
                 if(0 != _this.parameters.MRD && (now - this.initialDate) > _this.parameters.MRD)
+                {
                     _this.endTransaction(new RadiusException("Timeout: Maximum Retransmission Duration reached: " +  _this.parameters.MRD + " ms"));
+                    return;
+                }
 
                 if(0 != _this.parameters.MRC && this.RC > _this.parameters.MRC)
+                {
                     _this.endTransaction(new RadiusException("Timeout: Maximum Retransmission Count reached: " + _this.parameters.MRC));
+                    return;
+                }
                 
                 try
                 {
                     _this.radiusSocket.send(_this.request);
+                    if(RadiusLogger.logger.isLoggable(Level.WARNING)) RadiusLogger.logger.log(Level.WARNING, "sent retransmission after "+ (now - this.initialDate) +"ms for request\n" + RadiusMessageUtils.toString(_this.request));
                 
                     // compute next retransmission delay
                     this.RC++;
@@ -103,18 +116,24 @@ public class RadiusClientTransaction
         
         if(!response.hasValidResponseAuthenticator(this.request.getAuthenticator()))
         {
-            System.err.println("DEBUG: silently discarding response (invalid identifier)");
+            if(RadiusLogger.logger.isLoggable(Level.WARNING)) RadiusLogger.logger.log(Level.WARNING, "silently discarding response (invalid authenticator)\n" + RadiusMessageUtils.toString(response));
             return;
         }
         
         this.radiusClientTransactionResult = new RadiusClientTransactionResult(this.request, response, null);
         this.radiusClientContext.removeTransaction(this.request.getIdentifier());
+        
+        if(RadiusLogger.logger.isLoggable(Level.FINE)) RadiusLogger.logger.log(Level.FINE, "ending transaction with reponse\n" + RadiusMessageUtils.toString(response) + "\nfor request\n" + RadiusMessageUtils.toString(request));
+
         this.semaphore.release();
     }
 
     synchronized public void endTransaction(Exception e)
     {
         if(null != this.radiusClientTransactionResult) return;
+        
+        if(RadiusLogger.logger.isLoggable(Level.WARNING)) RadiusLogger.logger.log(Level.WARNING, "ending transaction with reason [" + e.getMessage() + "]");
+
         this.radiusClientTransactionResult = new RadiusClientTransactionResult(this.request, null, new RadiusException("Exception in transaction of remote " + this.request.getRemoteAddress() + " and id " + this.request.getIdentifier(), e));
         this.radiusClientContext.removeTransaction(this.request.getIdentifier());
         this.semaphore.release();

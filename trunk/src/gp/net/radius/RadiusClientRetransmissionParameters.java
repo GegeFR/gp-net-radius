@@ -36,7 +36,7 @@ public class RadiusClientRetransmissionParameters
     
     public RadiusClientRetransmissionParameters()
     {
-        this(2000 ,2 , 16000, 30000);
+        this(2000, 5, 16000, 30000);
     }
     
     public RadiusClientRetransmissionParameters(long IRT, long MRC, long MRT, long MRD)

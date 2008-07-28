@@ -94,4 +94,22 @@ public class RadiusMessageUtils
         
         return result;
     }
+    
+    static public String toString(RadiusMessage message)
+    {
+        StringBuilder stringBuidler = new StringBuilder();
+        
+        stringBuidler.append("[header code=").append(message.getCode()).append(", ");
+        stringBuidler.append("identifier=").append(message.getIdentifier()).append(", ");
+        stringBuidler.append("authenticator=").append(message.getAuthenticator()).append("]\n");
+        
+        for(AVPBytes avp:message.getAVPs())
+        {
+            stringBuidler.append("[avp code=").append(avp.getType()).append(", ");
+            stringBuidler.append("length=").append(avp.getLength()).append(", ");
+            stringBuidler.append("data= ").append(avp.getData().toString().replace("\n", "")).append("]\n");
+        }
+        
+        return stringBuidler.toString();
+    }
 }
