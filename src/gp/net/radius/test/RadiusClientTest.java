@@ -6,11 +6,14 @@ package gp.net.radius.test;
 
 import gp.net.radius.RadiusClient;
 import gp.net.radius.RadiusClientRetransmissionParameters;
+import gp.net.radius.RadiusLogger;
 import gp.net.radius.RadiusSocket;
 import gp.net.radius.data.AVPBytes;
 import gp.net.radius.data.RadiusMessage;
 import gp.utils.arrays.DefaultArray;
 import java.net.InetSocketAddress;
+import java.util.logging.Handler;
+import java.util.logging.Level;
 
 /**
  *
@@ -23,6 +26,8 @@ public class RadiusClientTest
     {
         try
         {
+            RadiusLogger.logger.setLevel(Level.ALL);
+            //RadiusLogger.logger.addHandler(L)
             RadiusSocket client = new RadiusSocket();
             final RadiusClient radiusClient =  new RadiusClient(client);
             
@@ -42,8 +47,18 @@ public class RadiusClientTest
                 //VendorData vendorData;
 
                 avp = new AVPBytes();
+                avp.setType(0);
+                avp.setData(new DefaultArray("0123456789012345000000000000".getBytes()));
+                requestSent.addAVP(avp);
+
+                avp = new AVPBytes();
+                avp.setType(1);
+                avp.setData(new DefaultArray("0123456789012345000000000000".getBytes()));
+                requestSent.addAVP(avp);
+
+                avp = new AVPBytes();
                 avp.setType(2);
-                avp.setData(new DefaultArray("0123456789012345".getBytes()));
+                avp.setData(new DefaultArray("012345678901234500000000000000".getBytes()));
                 requestSent.addAVP(avp);
                 requestSent.setSecret(new DefaultArray("totosecret".getBytes()));
                 requestSent.computeRequestAuthenticator();
