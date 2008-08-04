@@ -12,7 +12,6 @@
 
 package gp.net.radius.data;
 
-import gp.utils.arrays.Integer08Array;
 import gp.utils.arrays.Integer32Array;
 
 /**
