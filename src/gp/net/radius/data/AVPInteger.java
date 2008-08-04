@@ -12,6 +12,7 @@
 
 package gp.net.radius.data;
 
+import gp.utils.arrays.Integer08Array;
 import gp.utils.arrays.Integer32Array;
 
 /**
@@ -32,9 +33,7 @@ public class AVPInteger extends AVPBytes
     
     public int getValue()
     {
-        return ((this.getData().get(0) & 0xFF) << 24) + 
-               ((this.getData().get(1) & 0xFF) << 16) +
-               ((this.getData().get(1) & 0xFF) << 8) +
-               (this.getData().get(3) & 0xFF);
+        Integer08Array integer08Array = new Integer08Array(this.getData());
+        return integer08Array.getValue();
     }
 }
