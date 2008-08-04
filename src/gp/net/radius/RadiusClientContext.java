@@ -51,7 +51,7 @@ public class RadiusClientContext {
         
         request.setIdentifier(identifier);
         request.computeRequestAuthenticator();
-        request.encodeUserPasswordAvps();
+        if(1 == request.getCode()) request.encodeUserPasswordAvps();
         
         RadiusClientTransaction radiusClientTransaction = new RadiusClientTransaction(request, this.radiusSocket, this, radiusClientRetransmissionParameters);
         
