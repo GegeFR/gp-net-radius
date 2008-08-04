@@ -32,6 +32,9 @@ public class AVPInteger extends AVPBytes
     
     public int getValue()
     {
-        return new Integer32Array(this.getData()).getValue();
+        return ((this.getData().get(0) & 0xFF) << 24) + 
+               ((this.getData().get(1) & 0xFF) << 16) +
+               ((this.getData().get(1) & 0xFF) << 8) +
+               (this.getData().get(3) & 0xFF);
     }
 }
