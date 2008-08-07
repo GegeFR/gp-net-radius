@@ -14,6 +14,7 @@ package gp.net.radius;
 
 import gp.net.radius.data.RadiusMessage;
 import gp.net.radius.exceptions.RadiusException;
+import java.net.SocketAddress;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -33,7 +34,6 @@ public class RadiusClient
         final RadiusClient _this = this;
         Runnable runnable = new Runnable()
         {
-            @Override
             public void run()
             {
                 try
@@ -86,5 +86,10 @@ public class RadiusClient
         }
         
         return context.createTransaction(request, radiusClientRetransmissionParameters).waitResponse();
+    }
+    
+    public SocketAddress getLocalsocketAddress()
+    {
+        return this.radiusSocket.getLocalsocketAddress();
     }
 }
