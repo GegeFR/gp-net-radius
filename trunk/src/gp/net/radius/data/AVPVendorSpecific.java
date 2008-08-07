@@ -32,7 +32,7 @@ public class AVPVendorSpecific extends AVPBytes
         super(code);
         this.vendorId = new Integer32Array(vendorId);
         this.vendorData = vendorData;
-        super.setData(new SupArray().addLast(this.vendorData).addLast(this.vendorData));
+        super.setData(new SupArray().addLast(this.vendorId).addLast(this.vendorData));
     }
 
     public AVPVendorSpecific(AVPBytes bytesAVP) throws RadiusException

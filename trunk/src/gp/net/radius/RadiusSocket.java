@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.net.SocketException;
 import java.util.logging.Level;
 
@@ -82,6 +83,11 @@ public class RadiusSocket
     public int getLocalPort()
     {
         return this.socket.getLocalPort();
+    }
+    
+    public SocketAddress getLocalsocketAddress()
+    {
+        return this.socket.getLocalSocketAddress();
     }
     
     public void send(RadiusMessage radiusMessage) throws SocketException, IOException

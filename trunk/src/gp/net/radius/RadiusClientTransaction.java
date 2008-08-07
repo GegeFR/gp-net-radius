@@ -52,7 +52,6 @@ public class RadiusClientTransaction
             private long RT;
             private long RC = 0;
             
-            @Override
             public void execute()
             {
                 long now = System.currentTimeMillis();
