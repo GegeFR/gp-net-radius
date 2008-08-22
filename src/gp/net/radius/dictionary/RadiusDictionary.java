@@ -26,19 +26,25 @@ import java.util.LinkedList;
  */
 public class RadiusDictionary
 {
-
+    private RadiusCodes radiusCodes;
     private RadiusVendors radiusVendors;
     private final String defaultVendorName = "Base";
     private final Integer defaultVendorCode = -1;
 
     public RadiusDictionary(File file) throws FileNotFoundException, IOException, AssociationHashMapUniquenessException
     {
+        this.radiusCodes = new RadiusCodes();
         this.radiusVendors = new RadiusVendors();
         this.radiusVendors.addVendor(this.defaultVendorName, this.defaultVendorCode);
-
+        
         this.parseFile(file);
     }
 
+    public RadiusCodes getRadiusCodes()
+    {
+        return this.radiusCodes;
+    }
+    
     public RadiusVendors getRadiusVendors()
     {
         return this.radiusVendors;
