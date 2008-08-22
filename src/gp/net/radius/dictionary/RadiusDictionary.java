@@ -44,6 +44,25 @@ public class RadiusDictionary
         return this.radiusVendors;
     }
 
+    public RadiusAttributes getRadiusAttributes(Integer vendorCode)
+    {
+        return this.radiusVendors.getRadiusAttributes(vendorCode);
+    }
+    
+    public RadiusValues getRadiusValues(Integer vendorCode, Integer attributeCode)
+    {
+        RadiusAttributes radiusAttributes = this.radiusVendors.getRadiusAttributes(vendorCode);
+        
+        if(null != radiusAttributes)
+        {
+            return radiusAttributes.getAttributeRadiusValues(vendorCode);
+        }
+        else
+        {
+            return null;
+        }
+    }
+    
     private void parseFile(File file) throws FileNotFoundException, IOException, AssociationHashMapUniquenessException
     {
         BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
