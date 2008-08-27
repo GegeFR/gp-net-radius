@@ -107,7 +107,7 @@ public class RadiusMessageUtils
         {
             stringBuidler.append("[avp code=").append(avp.getType()).append(", ");
             stringBuidler.append("length=").append(avp.getLength()).append(", ");
-            stringBuidler.append("data= ").append(avp.getData().toString().replace("\n", "")).append("]\n");
+            stringBuidler.append("data= ").append(avp.getData().toString().replace("\n", " ")).append("]\n");
         }
         
         return stringBuidler.toString();
