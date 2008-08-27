@@ -131,7 +131,7 @@ public class RadiusClientTransaction
     {
         if(null != this.radiusClientTransactionResult) return;
         
-        if(RadiusLogger.logger.isLoggable(Level.WARNING)) RadiusLogger.logger.log(Level.WARNING, "ending transaction with reason [" + e.getMessage() + "]");
+        if(RadiusLogger.logger.isLoggable(Level.WARNING)) RadiusLogger.logger.log(Level.WARNING, "ending transaction with exception", e);
 
         this.radiusClientTransactionResult = new RadiusClientTransactionResult(this.request, null, new RadiusException("Exception in transaction of remote " + this.request.getRemoteAddress() + " and id " + this.request.getIdentifier(), e));
         this.radiusClientContext.removeTransaction(this.request.getIdentifier());

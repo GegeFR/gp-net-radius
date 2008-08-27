@@ -12,8 +12,9 @@ import gp.net.radius.data.AVPBytes;
 import gp.net.radius.data.RadiusMessage;
 import gp.utils.arrays.DefaultArray;
 import java.net.InetSocketAddress;
-import java.util.logging.Handler;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -26,8 +27,14 @@ public class RadiusClientTest
     {
         try
         {
+            Logger.getLogger("").setLevel(Level.OFF);
+            System.out.println(Logger.getLogger("").getHandlers().length);
+//            ConsoleHandler handler = new ConsoleHandler();
+//            handler.setLevel(Level.ALL);
+//            RadiusLogger.logger.addHandler(handler);
+            //RadiusLogger.logger.
             RadiusLogger.logger.setLevel(Level.ALL);
-            //RadiusLogger.logger.addHandler(L)
+            
             RadiusSocket client = new RadiusSocket();
             final RadiusClient radiusClient =  new RadiusClient(client);
             
@@ -97,14 +104,11 @@ public class RadiusClientTest
                 //System.out.println("\nsent");
                 //System.out.println(requestSent.getArray());
 
-                RadiusMessage requestReceived = server.receive();
- requestReceived = server.receive();
-  requestReceived = server.receive();
-  requestReceived = server.receive();
-  requestReceived = server.receive();
-  requestReceived = server.receive();
-//            System.out.println("\nreceived");
-//            System.out.println(requestReceived.getArray());
+                RadiusMessage requestReceived;
+                requestReceived = server.receive();
+                requestReceived = server.receive();
+                System.out.println("\nreceived");
+                System.out.println(requestReceived.getArray());
 
                 requestReceived.setSecret(new DefaultArray("totosecret".getBytes()));
 
@@ -114,6 +118,7 @@ public class RadiusClientTest
 
                 RadiusMessage responseSent = new RadiusMessage();
                 responseSent.setCode(2);
+                responseSent.setIdentifier(requestReceived.getIdentifier());
                 avp = new AVPBytes();
                 avp.setType(3);
                 avp.setData(new DefaultArray("0123456789012345".getBytes()));
