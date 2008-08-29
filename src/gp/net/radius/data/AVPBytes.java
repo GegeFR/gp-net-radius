@@ -69,6 +69,8 @@ public class AVPBytes
     {
         this.header = bytesAVP.header;
         this.data = bytesAVP.data;
+        this.length = bytesAVP.length;
+        this.code = bytesAVP.code;
     }
 
     public int getType()
