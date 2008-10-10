@@ -98,7 +98,7 @@ public class FunctionalTest
             request.addAVP(new AVPBytes(4, new ReadOnlyDefaultArray(InetAddress.getByName("192.168.1.16").getAddress())));
             request.addAVP(new AVPInteger(5, 3));
 
-            request.encodeUserPasswordAvps();
+            request.encodeUserPasswordAvp();
 
             if(!request.getArray().toString().equals(req_7_1))
             {

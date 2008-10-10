@@ -41,7 +41,7 @@ public class RadiusMessageTest
                 message.computeRequestAuthenticator();
                 if (message.getCode() == 1)
                 {
-                    message.encodeUserPasswordAvps();
+                    message.encodeUserPasswordAvp();
                 }
                 dataVolume += message.getArray().getBytes().length;
                 //System.out.println(message.getArray());

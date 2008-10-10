@@ -63,18 +63,26 @@ public class RadiusClientTest
                 avp.setData(new DefaultArray("0123456789012345000000000000".getBytes()));
                 requestSent.addAVP(avp);
 
+//                avp = new AVPBytes();
+//                avp.setType(2);
+//                avp.setData(new DefaultArray("012345678901234500000000000000".getBytes()));
+//                requestSent.addAVP(avp);
+
                 avp = new AVPBytes();
-                avp.setType(2);
+                avp.setType(79);
                 avp.setData(new DefaultArray("012345678901234500000000000000".getBytes()));
                 requestSent.addAVP(avp);
-                requestSent.setSecret(new DefaultArray("totosecret".getBytes()));
-                requestSent.computeRequestAuthenticator();
 
+                
+                
+                requestSent.setSecret(new DefaultArray("totosecret".getBytes()));
+                //requestSent.computeRequestAuthenticator();
+                //requestSent.computeRequestMessageAuthenticator();
 
                 //System.out.println("\nunencrypted");
                 //System.out.println(requestSent.getArray());
 
-                requestSent.encodeUserPasswordAvps();
+                //requestSent.encodeUserPasswordAvp();
 
                 requestSent.setRemoteAddress(new InetSocketAddress("127.0.0.1", 12345));
 
@@ -88,8 +96,11 @@ public class RadiusClientTest
                         try
                         {
                             System.out.println("send");
-                            radiusClient.send(requestSent, new RadiusClientRetransmissionParameters());    
+                            RadiusMessage response = radiusClient.send(requestSent, new RadiusClientRetransmissionParameters());    
                             System.out.println("sended");
+                            System.out.println("response.hasValidResponseAuthenticator() ... " + response.hasValidResponseAuthenticator(requestSent.getAuthenticator()));
+                            System.out.println("response.hasValidResponseMessageAuthenticator() ... " + response.hasValidResponseMessageAuthenticator(requestSent.getAuthenticator()));
+
                         }
                         catch(Exception e)
                         {
@@ -106,15 +117,15 @@ public class RadiusClientTest
 
                 RadiusMessage requestReceived;
                 requestReceived = server.receive();
-                requestReceived = server.receive();
                 System.out.println("\nreceived");
                 System.out.println(requestReceived.getArray());
 
                 requestReceived.setSecret(new DefaultArray("totosecret".getBytes()));
 
-                requestReceived.decodeUserPasswordAvps();
+                //requestReceived.decodeUserPasswordAvp();
 
-                //System.out.println("requestReceived.hasValidRequestAuthenticator() ... " + requestReceived.hasValidRequestAuthenticator());
+                System.out.println("requestReceived.hasValidRequestAuthenticator() ... " + requestReceived.hasValidRequestAuthenticator());
+                System.out.println("requestReceived.hasValidRequestMessageAuthenticator() ... " + requestReceived.hasValidRequestMessageAuthenticator());
 
                 RadiusMessage responseSent = new RadiusMessage();
                 responseSent.setCode(2);
@@ -125,6 +136,7 @@ public class RadiusClientTest
                 responseSent.addAVP(avp);
                 responseSent.setSecret(new DefaultArray("totosecret".getBytes()));
                 responseSent.computeResponseAuthenticator(requestReceived.getAuthenticator());
+                responseSent.computeResponseMessageAuthenticator(requestReceived.getAuthenticator());
                 responseSent.setRemoteAddress(requestReceived.getRemoteAddress());
 
 

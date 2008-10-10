@@ -29,20 +29,29 @@ public class RadiusClientTransaction
     private static Scheduler retransmissionsScheduler = new Scheduler(2);
     
     private RadiusMessage request;
+    private RadiusMessage response;
+    private Exception exception;
+    
     private RadiusSocket radiusSocket;
     private Semaphore semaphore;
     private RadiusClientContext radiusClientContext;
     private RadiusClientTransactionResult radiusClientTransactionResult;
     private RadiusClientRetransmissionParameters parameters;
 
+    private long RC;
+    
     public RadiusClientTransaction(RadiusMessage request, RadiusSocket radiusSocket, RadiusClientContext radiusClientContext, RadiusClientRetransmissionParameters radiusClientRetransmissionParameters)
     {
         this.request = request;
+        this.response = null;
+        this.exception = null;
+        
         this.radiusSocket = radiusSocket;
         this.radiusClientContext = radiusClientContext;
         this.radiusClientTransactionResult = null;
         this.semaphore = new Semaphore(0);
         this.parameters = radiusClientRetransmissionParameters;
+        this.RC = 0;
         
         final RadiusClientTransaction _this = this;
         
@@ -80,7 +89,8 @@ public class RadiusClientTransaction
                     if(RadiusLogger.logger.isLoggable(Level.WARNING)) RadiusLogger.logger.log(Level.WARNING, "sent retransmission after "+ (now - this.initialDate) +"ms for request\n" + RadiusMessageUtils.toString(_this.request));
                 
                     // compute next retransmission delay
-                    this.RC++;
+                    _this.RC = this.RC++;
+                    
                     double RAND = ((Math.random() - 0.5) / 5);
                     if(1 == this.RC)                                                             // if first retransmission
                         this.RT = (long) (_this.parameters.IRT + _this.parameters.IRT*RAND);     //   RT = IRT + RAND*IRT
@@ -111,14 +121,22 @@ public class RadiusClientTransaction
     {
         if(null != this.radiusClientTransactionResult) return;
         
+        this.response = response;
+        
         response.setSecret(this.request.getSecret());
         
         if(!response.hasValidResponseAuthenticator(this.request.getAuthenticator()))
         {
-            if(RadiusLogger.logger.isLoggable(Level.WARNING)) RadiusLogger.logger.log(Level.WARNING, "silently discarding response (invalid authenticator)\n" + RadiusMessageUtils.toString(response));
+            if(RadiusLogger.logger.isLoggable(Level.WARNING)) RadiusLogger.logger.log(Level.WARNING, "silently discarding response (invalid header authenticator field)\n" + RadiusMessageUtils.toString(response));
             return;
         }
         
+        if(!response.hasValidResponseMessageAuthenticator(this.request.getAuthenticator()))
+        {
+            if(RadiusLogger.logger.isLoggable(Level.WARNING)) RadiusLogger.logger.log(Level.WARNING, "silently discarding response (invalid Message-Authenticator AVP)\n" + RadiusMessageUtils.toString(response));
+            return;
+        }
+
         this.radiusClientTransactionResult = new RadiusClientTransactionResult(this.request, response, null);
         this.radiusClientContext.removeTransaction(this.request.getIdentifier());
         
@@ -130,6 +148,8 @@ public class RadiusClientTransaction
     synchronized public void endTransaction(Exception e)
     {
         if(null != this.radiusClientTransactionResult) return;
+        
+        this.exception = e;
         
         if(RadiusLogger.logger.isLoggable(Level.WARNING)) RadiusLogger.logger.log(Level.WARNING, "ending transaction with exception", e);
 
@@ -158,4 +178,26 @@ public class RadiusClientTransaction
             return this.radiusClientTransactionResult.response;
         }
     }
+    
+    public long getRetransmissionCount()
+    {
+        return this.RC;
+    }
+    
+    public RadiusMessage getRequest()
+    {
+        return this.request;
+    }
+
+    public RadiusMessage getResponse()
+    {
+        return this.response;
+    }
+
+    public Exception getException()
+    {
+        return this.exception;
+    }
+    
+    
 }

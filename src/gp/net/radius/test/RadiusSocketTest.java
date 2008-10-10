@@ -49,7 +49,7 @@ public class RadiusSocketTest
                 //System.out.println("\nunencrypted");
                 //System.out.println(requestSent.getArray());
 
-                requestSent.encodeUserPasswordAvps();
+                requestSent.encodeUserPasswordAvp();
 
                 requestSent.setRemoteAddress(new InetSocketAddress("127.0.0.1", 12345));
 
@@ -68,7 +68,7 @@ public class RadiusSocketTest
 
                 requestReceived.setSecret(new DefaultArray("totosecret".getBytes()));
 
-                requestReceived.decodeUserPasswordAvps();
+                requestReceived.decodeUserPasswordAvp();
 
                 //System.out.println("requestReceived.hasValidRequestAuthenticator() ... " + requestReceived.hasValidRequestAuthenticator());
 
