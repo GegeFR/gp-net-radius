@@ -19,6 +19,7 @@ import gp.utils.arrays.DefaultArray;
 import gp.utils.arrays.DigestArray;
 import gp.utils.arrays.Integer08Array;
 import gp.utils.arrays.Integer16Array;
+import gp.utils.arrays.MacArray;
 import gp.utils.arrays.SupArray;
 import java.net.InetSocketAddress;
 import java.util.Collections;
@@ -42,7 +43,11 @@ public class RadiusMessage
     
     private LinkedList<AVPBytes> avps;
 
-    private LinkedList<AVPBytes> userPasswordAvps;
+    private AVPBytes userPasswordAvp;
+
+    private AVPBytes messageAuthenticatorAvp;
+    
+    private boolean containsEAPMessage;
     
     private InetSocketAddress localAddress;
     
@@ -61,7 +66,9 @@ public class RadiusMessage
 
         this.avps = new LinkedList<AVPBytes>();
         
-        this.userPasswordAvps = new LinkedList<AVPBytes>();
+        this.userPasswordAvp = null;
+        this.messageAuthenticatorAvp = null;
+        this.containsEAPMessage = false;
         
         this.setLength(20);
     }
@@ -79,8 +86,10 @@ public class RadiusMessage
         
         this.avps = new LinkedList<AVPBytes>();
         
-        this.userPasswordAvps = new LinkedList<AVPBytes>();
-        
+        this.userPasswordAvp = null;
+        this.messageAuthenticatorAvp = null;
+        this.containsEAPMessage = false;
+
         if(this.getLength() != data.length)
         {
             throw new RadiusException("Invalid length of message (" + data.length + ") or invalid length in header (" + this.length.getValue() + ")");
@@ -153,11 +162,34 @@ public class RadiusMessage
 
     private void addAVP(AVPBytes avp, boolean setLength)
     {
+        int type = avp.getType();
+        
         // special behavior for User-Password AVP
-        if(avp.getType() == 2)
+        if(type == 2)
         {
             avp.setData(RadiusMessageUtils.padUserPassword(avp.getData()));
-            this.userPasswordAvps.addLast(avp);
+            if(null == this.userPasswordAvp) this.userPasswordAvp = avp;
+            else                             throw new RuntimeException("Only one User-Password AVP (2) is allowed.");
+
+            if(null != this.messageAuthenticatorAvp) throw new RuntimeException("User-Password(2) cannot be in the same message as Message-Authenticator(80).");
+            if(this.containsEAPMessage) throw new RuntimeException("User-Password(2) cannot be in the same message as EAP-Message(79).");
+        }
+        
+        // special behavior for Message-Authenticator AVP
+        if(type == 80)
+        {
+            if(null != this.userPasswordAvp) throw new RuntimeException("Message-Authenticator(80) cannot be in the same message as User-Password(2).");
+            
+            if(null == this.messageAuthenticatorAvp) this.messageAuthenticatorAvp = avp;
+            else                                     throw new RuntimeException("Only one Message-Authenticator AVP (80) is allowed.");
+        }
+
+        // special behavior for EAP-Message AVP
+        if(type == 79)
+        {
+            if(null != this.userPasswordAvp) throw new RuntimeException("Message-Authenticator(80) cannot be in the same message as User-Password(2).");
+
+            this.containsEAPMessage = true;
         }
         
         avps.addLast(avp);
@@ -172,26 +204,23 @@ public class RadiusMessage
         return Collections.unmodifiableList(avps);
     }
 
-    public void encodeUserPasswordAvps()
+    public void encodeUserPasswordAvp()
     {
-        this.assertAccessRequest();
-        this.assertSecretPresent();
-        this.assertAuthenticatorPresent();
-        for(AVPBytes userPasswordAvp:userPasswordAvps)
+        if(null != userPasswordAvp)
         {
-            userPasswordAvp.setData(RadiusMessageUtils.encodeUserPassword(this.authenticator, this.secret, userPasswordAvp.getData()));
+            this.assertAccessRequest();
+            this.assertSecretPresent();
+            this.assertAuthenticatorPresent();
+            this.userPasswordAvp.setData(RadiusMessageUtils.encodeUserPassword(this.authenticator, this.secret, this.userPasswordAvp.getData()));
         }
     }
     
-    public void decodeUserPasswordAvps()
+    public void decodeUserPasswordAvp()
     {
         this.assertAccessRequest();
         this.assertSecretPresent();
         this.assertAuthenticatorPresent();
-        for(AVPBytes userPasswordAvp:userPasswordAvps)
-        {
-            userPasswordAvp.setData(RadiusMessageUtils.decodeUserPassword(this.authenticator, this.secret, userPasswordAvp.getData()));
-        }
+        this.userPasswordAvp.setData(RadiusMessageUtils.decodeUserPassword(this.authenticator, this.secret, this.userPasswordAvp.getData()));
     }
 
     public void computeRequestAuthenticator()
@@ -211,17 +240,104 @@ public class RadiusMessage
         this.authenticator = computeAuthenticator(requestAuthenticator);
     }
     
+    public void computeRequestMessageAuthenticator()
+    {
+        this.assertAuthenticatorPresent();
+        if(this.getCode() == 1)
+        {
+            if(this.containsEAPMessage || null != this.messageAuthenticatorAvp)
+            {
+                if(null == this.messageAuthenticatorAvp)
+                {
+                    AVPBytes avpBytes = new AVPBytes();
+                    avpBytes.setType(80);
+                    avpBytes.setData(new ConstantArray((byte) 0, 16));
+                    this.addAVP(avpBytes);
+                }
+                else
+                {
+                    this.messageAuthenticatorAvp.setData(new ConstantArray((byte) 0, 16));    
+                }
+                this.messageAuthenticatorAvp.setData(computeMessageAuthenticator(this.authenticator));
+            }
+        }
+        // do nothing if it is not an Access request
+    }
+    
+    public void computeResponseMessageAuthenticator(Array requestAuthenticator)
+    {
+        this.assertAuthenticatorPresent();
+        if(this.getCode() == 2 || this.getCode() == 3 || this.getCode() == 11)
+        {
+            if(this.containsEAPMessage || null != this.messageAuthenticatorAvp)
+            {
+                if(null == this.messageAuthenticatorAvp)
+                {
+                    AVPBytes avpBytes = new AVPBytes();
+                    avpBytes.setType(80);
+                    avpBytes.setData(new ConstantArray((byte) 0, 16));
+                    this.addAVP(avpBytes);
+                }
+                else
+                {
+                    this.messageAuthenticatorAvp.setData(new ConstantArray((byte) 0, 16));    
+                }
+                this.messageAuthenticatorAvp.setData(computeMessageAuthenticator(requestAuthenticator));
+            }
+        }
+        // do nothing if it is not an Access request
+    }
+    
     public boolean hasValidRequestAuthenticator()
     {
         if(this.getCode() == 1)
         {
-            // an Access-Request authenticator being random, it is always correct
+            // an Access-Request authenticator, being random, is always correct
             return true;
         }
 
         return this.authenticator.equals(computeAuthenticator(new ConstantArray((byte) 0, 16)));
     }
-    
+
+    public boolean hasValidRequestMessageAuthenticator()
+    {
+        if(null == this.messageAuthenticatorAvp)
+        {
+            return true;
+        }
+        
+        Array receivedAuthenticator = this.messageAuthenticatorAvp.getData();
+        
+        this.messageAuthenticatorAvp.setData(new ConstantArray((byte) 0, 16));
+        
+        Array wantedAuthenticator = this.computeMessageAuthenticator(this.authenticator);
+        
+        this.messageAuthenticatorAvp.setData(receivedAuthenticator);
+        
+        System.err.println("receivedAuthenticator="+receivedAuthenticator);
+        System.err.println("wantedAuthenticator="+wantedAuthenticator);
+        
+        return receivedAuthenticator.equals(wantedAuthenticator);
+    }
+        
+    public boolean hasValidResponseMessageAuthenticator(Array requestAuthenticator)
+    {
+        if(null == this.messageAuthenticatorAvp)
+        {
+            return true;
+        }
+        
+        Array receivedAuthenticator = this.messageAuthenticatorAvp.getData();
+        
+        this.messageAuthenticatorAvp.setData(new ConstantArray((byte) 0, 16));
+        
+        Array wantedAuthenticator = this.computeMessageAuthenticator(requestAuthenticator);
+        
+        this.messageAuthenticatorAvp.setData(receivedAuthenticator);
+        
+        return receivedAuthenticator.equals(wantedAuthenticator);
+    }
+
     public boolean hasValidResponseAuthenticator(Array requestAuthenticator)
     {
         return this.authenticator.equals(computeAuthenticator(requestAuthenticator));
@@ -240,6 +356,19 @@ public class RadiusMessage
         return new DigestArray(temp, "MD5");
     }
     
+    private Array computeMessageAuthenticator(Array inputAuthenticator)
+    {
+        this.assertSecretPresent();
+        SupArray temp = new SupArray().addLast(this.header).addLast(inputAuthenticator);
+        for(AVPBytes avp:avps)
+        {
+            temp.addLast(avp.getArray());
+        }
+System.out.println("secret =" + secret + "\n" + "compute on "  + RadiusMessageUtils.toString(this));
+        
+        return new MacArray(temp, "HmacMD5", secret);
+    }
+
     public Array getArray()
     {
         this.assertAuthenticatorPresent();

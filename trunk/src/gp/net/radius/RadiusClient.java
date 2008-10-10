@@ -72,6 +72,11 @@ public class RadiusClient
     
     public RadiusMessage send(RadiusMessage request, RadiusClientRetransmissionParameters radiusClientRetransmissionParameters) throws RadiusException
     {
+        return createTransaction(request, radiusClientRetransmissionParameters).waitResponse();
+    }
+    
+    public RadiusClientTransaction createTransaction(RadiusMessage request, RadiusClientRetransmissionParameters radiusClientRetransmissionParameters) throws RadiusException
+    {
         RadiusClientContext context;
         
         synchronized(contexts)
@@ -85,7 +90,7 @@ public class RadiusClient
             }
         }
         
-        return context.createTransaction(request, radiusClientRetransmissionParameters).waitResponse();
+        return context.createTransaction(request, radiusClientRetransmissionParameters);
     }
     
     public SocketAddress getLocalsocketAddress()
