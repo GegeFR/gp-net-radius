@@ -160,16 +160,21 @@ public class RadiusClientTransaction
     
     public RadiusMessage waitResponse() throws RadiusException
     {
+        return this.waitResponse(true);
+    }
+
+    public RadiusMessage waitResponse(boolean throwsExceptions) throws RadiusException
+    {
         try
         {
             this.semaphore.acquire();
         }
         catch(Exception e)
         {
-            throw new RadiusException(e);
+            this.exception = e;
         }
         
-        if(null != this.radiusClientTransactionResult.exception)
+        if(throwsExceptions && null != this.radiusClientTransactionResult.exception)
         {
             throw this.radiusClientTransactionResult.exception;
         }
