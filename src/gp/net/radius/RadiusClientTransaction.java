@@ -85,12 +85,10 @@ public class RadiusClientTransaction
                 
                 try
                 {
-                    _this.radiusSocket.send(_this.request);
-                    if(RadiusLogger.logger.isLoggable(Level.WARNING)) RadiusLogger.logger.log(Level.WARNING, "sent retransmission after "+ (now - this.initialDate) +"ms for request\n" + RadiusMessageUtils.toString(_this.request));
-                
                     // compute next retransmission delay
-                    _this.RC = this.RC++;
-                    
+                    this.RC++;
+                    _this.RC = this.RC;
+
                     double RAND = ((Math.random() - 0.5) / 5);
                     if(1 == this.RC)                                                             // if first retransmission
                         this.RT = (long) (_this.parameters.IRT + _this.parameters.IRT*RAND);     //   RT = IRT + RAND*IRT
@@ -103,8 +101,12 @@ public class RadiusClientTransaction
 
                     if(0 != _this.parameters.MRD && (now + this.RT) > (this.initialDate + _this.parameters.MRD))
                         this.RT = this.initialDate + _this.parameters.MRD - now;
-                    
-                    // then schedule it
+
+                    //send the current retransmission
+                    _this.radiusSocket.send(_this.request);
+                    if(RadiusLogger.logger.isLoggable(Level.WARNING)) RadiusLogger.logger.log(Level.WARNING, "sent retransmission after "+ (now - this.initialDate) +"ms for request\n" + RadiusMessageUtils.toString(_this.request));
+
+                    // then schedule the next retransmission
                     RadiusClientTransaction.retransmissionsScheduler.scheduleIn(this, this.RT);
                 }
                 catch(Exception exception)
@@ -171,6 +173,7 @@ public class RadiusClientTransaction
         }
         catch(Exception e)
         {
+            this.radiusClientTransactionResult = new RadiusClientTransactionResult(this.request, null, new RadiusException("Unexpected exception in transaction of remote " + this.request.getRemoteAddress() + " and id " + this.request.getIdentifier(), e));
             this.exception = e;
         }
         
