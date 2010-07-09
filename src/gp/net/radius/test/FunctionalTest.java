@@ -10,6 +10,7 @@ import gp.net.radius.data.AVPInteger;
 import gp.net.radius.data.RadiusMessage;
 import gp.net.radius.data.AVPString;
 import gp.utils.arrays.Array;
+import gp.utils.arrays.DefaultArray;
 import gp.utils.arrays.ReadOnlyDefaultArray;
 import java.net.InetAddress;
 
@@ -100,11 +101,10 @@ public class FunctionalTest
 
             request.encodeUserPasswordAvp();
 
-            if(!request.getArray().toString().equals(req_7_1))
+            if(!new DefaultArray(request.getArray().getBytes()).toString().equals(req_7_1))
             {
                 throw new Exception("test failed at request");
             }
-            
             
             RadiusMessage response = new RadiusMessage();
             response.setCode(2);
@@ -117,7 +117,7 @@ public class FunctionalTest
             
             response.computeResponseAuthenticator(request.getAuthenticator());
 
-            if(!response.getArray().toString().equals(res_7_1))
+            if(!new DefaultArray(response.getArray().getBytes()).toString().equals(res_7_1))
             {
                 throw new Exception("test failed at response");
             }
