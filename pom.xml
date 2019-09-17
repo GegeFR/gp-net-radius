@@ -140,9 +140,8 @@
                         </executions>
                         <configuration>
                             <serverId>ossrh</serverId>
-                            <nexusUrl>https://oss.sonatype.org/service/local/staging/deploy/maven2/</nexusUrl>
-                            <!-- explicit matching using the staging profile id -->
-                            <stagingProfileId>7edbe315063867</stagingProfileId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
                         </configuration>
                     </plugin>
                 </plugins>
